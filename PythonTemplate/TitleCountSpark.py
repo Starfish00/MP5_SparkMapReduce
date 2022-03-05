@@ -33,11 +33,11 @@ def preprocess(line):
 
 words = lines.map(preprocess).flatMap(lambda line: line.split()) # to filter by stopWords .filter(lambda word: word not in stopWordsList)
 
-counts = words.map(lambda word: (word, 1)).reduceByKey(lambda a, b: a + b)
+counts = words.filter(lambda word: word and word not in stopWordsList).map(lambda word: (word, 1)).reduceByKey(lambda a, b: a + b)
 
-sorted_counts = sorted(counts, key=lambda word_count: word_count[1], reverse=True)
+sorted_counts = counts.sortBy(word_count: word_count[1], ascending=False)
 
-top_counts = sorted(sorted_counts[:9], key=lambda word_count: word_count[0])
+top_counts = sorted_counts.takeOrdered(10, key=word_count: word_count[0])
 
 outputFile = open(sys.argv[4],"w")
 
